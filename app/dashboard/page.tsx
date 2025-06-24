@@ -9,6 +9,8 @@ import ResourcesTab from '@/components/dashboard/ResourcesTab';
 import BillingTab from '@/components/dashboard/BillingTab';
 import AdminTab from '@/components/dashboard/AdminTab';
 import DashboardOverview from '@/components/dashboard/DashboardOverview';
+import ContentEditor from '@/components/cms/ContentEditor';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -27,8 +29,12 @@ export default function DashboardPage() {
         return <ResourcesTab />;
       case 'billing':
         return <BillingTab />;
+      case 'cms':
+        return <ContentEditor />;
       case 'admin':
         return <AdminTab />;
+      case 'super-admin':
+        return <AdminDashboard />;
       default:
         return <DashboardOverview />;
     }

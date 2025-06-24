@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import GlobalSearch from '@/components/search/GlobalSearch';
 import { 
   Music, 
   Calendar, 
@@ -14,17 +15,19 @@ import {
   Home,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Shield,
+  Search
 } from 'lucide-react';
 import Link from 'next/link';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-export default function DashboardLayout({ children, activeTab, onTabChange }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, activeTab = 'overview', onTabChange }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications] = useState(3);
 
@@ -35,8 +38,17 @@ export default function DashboardLayout({ children, activeTab, onTabChange }: Da
     { id: 'contacts', label: 'Contacts', icon: Users },
     { id: 'resources', label: 'Ressources', icon: FileText },
     { id: 'billing', label: 'Facturation', icon: CreditCard },
+    { id: 'cms', label: 'Contenu', icon: FileText },
     { id: 'admin', label: 'Administration', icon: Settings },
+    { id: 'super-admin', label: 'Super Admin', icon: Shield },
   ];
+
+  const handleTabChange = (tabId: string) => {
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
+    setSidebarOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -72,10 +84,7 @@ export default function DashboardLayout({ children, activeTab, onTabChange }: Da
               {menuItems.map((item) => (
                 <li key={item.id}>
                   <button
-                    onClick={() => {
-                      onTabChange(item.id);
-                      setSidebarOpen(false);
-                    }}
+                    onClick={() => handleTabChange(item.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                       activeTab === item.id
                         ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
@@ -122,6 +131,21 @@ export default function DashboardLayout({ children, activeTab, onTabChange }: Da
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Global Search */}
+              <div className="hidden md:block">
+                <GlobalSearch />
+              </div>
+              
+              {/* Mobile search button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden text-slate-400 hover:text-white"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+              
+              {/* Notifications */}
               <Button
                 variant="ghost"
                 size="icon"
