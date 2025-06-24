@@ -1,0 +1,8 @@
+import { test, expect } from '@playwright/test';
+
+test.skip('navigate to invoices and delete', async ({ page }) => {
+  await page.goto('/');
+  await page.click('text=Facturation');
+  await page.click('text=Supprimer');
+  await expect(page.locator('text=Supprimée')).toBeVisible();
+});
