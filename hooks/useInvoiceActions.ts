@@ -1,51 +1,43 @@
 'use client';
-
 import { useCallback } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface UseInvoiceActions {
-  /** Prévisualiser une facture */
   handlePreview: (id: string) => void;
-  /** Envoyer une facture au client */
   handleSend: (id: string) => Promise<void>;
-  /** Imprimer une facture */
   handlePrint: (id: string) => void;
-  /** Modifier une facture */
   handleEdit: (id: string) => void;
-  /** Supprimer une facture */
   handleDelete: (id: string) => Promise<void>;
 }
 
 export function useInvoiceActions(): UseInvoiceActions {
+  const client = useQueryClient();
+
   const handlePreview = useCallback((id: string) => {
-    // Placeholder: open a preview modal or navigate
-    console.log('Preview invoice', id);
+    window.open(`/invoices/${id}`, '_blank');
   }, []);
 
   const handleSend = useCallback(async (id: string) => {
-    // Placeholder: send invoice to the customer
-    console.log('Send invoice', id);
+    const res = await fetch(`/api/invoices/${id}`, { method: 'POST' });
+    if (res.ok) toast({ title: 'Envoyée', description: id });
   }, []);
 
   const handlePrint = useCallback((id: string) => {
-    // Placeholder: trigger browser print
-    console.log('Print invoice', id);
+    window.print();
   }, []);
 
   const handleEdit = useCallback((id: string) => {
-    // Placeholder: open edit form
-    console.log('Edit invoice', id);
+    window.location.href = `/invoices/${id}`;
   }, []);
 
   const handleDelete = useCallback(async (id: string) => {
-    // Placeholder: delete invoice
-    console.log('Delete invoice', id);
-  }, []);
+    const res = await fetch(`/api/invoices/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      toast({ title: 'Supprimée', description: id });
+      client.invalidateQueries({ queryKey: ['invoices'] });
+    }
+  }, [client]);
 
-  return {
-    handlePreview,
-    handleSend,
-    handlePrint,
-    handleEdit,
-    handleDelete,
-  };
+  return { handlePreview, handleSend, handlePrint, handleEdit, handleDelete };
 }
